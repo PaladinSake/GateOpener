@@ -100,7 +100,6 @@ def validate_access(vehicle_plate):
     obj = json.loads(data)
     
     for approved_plate in obj["Numberplate List"]:
-        #print('checking against: ' + approved_plate)
         
         if vehicle_plate == approved_plate['Plate']:
            permission = True
