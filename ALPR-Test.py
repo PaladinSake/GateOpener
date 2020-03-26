@@ -29,7 +29,7 @@ def convert_to_greyscale(file_path):
     print('file saved as: ' + output_file)
             
 def resize_image(file_path):
-    basewidth = 300
+    basewidth = 250
     img = Image.open(file_path)
     wpercent = (basewidth / float(img.size[0]))
     hsize = int((float(img.size[1]) * float(wpercent)))

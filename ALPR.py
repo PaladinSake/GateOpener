@@ -2,13 +2,14 @@ from openalpr import Alpr
 from argparse import ArgumentParser
 from PIL import Image
 from pathlib import Path
-import time
+from time import sleep
 #import RPi.GPIO as GPIO
 import os
 import shutil
 import time
 import re
 import json
+from picamera import PiCamera
 
 print("imports done.")
 
@@ -51,6 +52,9 @@ def process_image(file_path):
     jpeg_bytes = open(file_path, "rb").read()
     results = alpr.recognize_array(jpeg_bytes)
 
+    plate_text = 'No Plate Found.'
+    plate_confidence = 0
+
     # Uncomment to see the full results structure
     # import pprint
     # pprint.pprint(results)
@@ -65,13 +69,19 @@ def process_image(file_path):
             prefix = "-"
             if candidate['matches_template']:
                 prefix = "*"
+                plate_text = candidate['plate']
+                plate_confidence = candidate['confidence']
 
-            print 'Plate: ' + candidate['plate'], candidate['confidence']
+            print 'Plate: ' + plate_found + ' ' + str(plate_confidence) + '%'
             
-    return candidate['plate']
+    return plate_text
 
 def capture_image():
-    shutil.copyfile("ImageSource/ea7the.jpg", basepath + "/CapturedImage.jpg")
+    camera=PiCamera()
+    camera.start_preview()
+    sleep(5)
+    camera.capture('/home/pi/GateOpener/Images/CapturedImage.jpg')
+    camera.stop_preview()
     
 def archive_images():
     time_string = time.strftime("%Y%m%d-%H%M%S")
@@ -169,7 +179,7 @@ try:
                 
                 archive_images()
             
-            time.sleep(0.1)
+            sleep(0.1)
             
             i=i+1
         
