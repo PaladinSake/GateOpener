@@ -72,7 +72,8 @@ def process_image(file_path):
                 plate_text = candidate['plate']
                 plate_confidence = candidate['confidence']
 
-            print 'Plate: ' + plate_found + ' ' + str(plate_confidence) + '%'
+    
+    print 'Plate: ' + plate_text + ' ' + str(plate_confidence) + '%'
             
     return plate_text
 
@@ -124,6 +125,7 @@ try:
     config = '/etc/openalpr/openalpr.conf'
     runtime_data = '/usr/share/openalpr/runtime_data'
     basepath = 'Images'
+    approval = False
     
     i=0
     
@@ -165,12 +167,10 @@ try:
                 print("Processing Resized Greyscale...")
                 numberplate_output = process_image(basepath + '/resized_greyscale_' + filename + '.png')
                 
-                if re.search('[0-9]', numberplate_output):
-                    print('digit found.')
+                if numberplate_output == 'No Plate Found.':
+                    print('Nothing Found.')
                 else:
-                    print('nothing')
-                    
-                approval = validate_access(numberplate_output)
+                    approval = validate_access(numberplate_output)
                 
                 if approval == True:
                     print 'Access Granted. Opening Gate...'
